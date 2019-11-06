@@ -8,7 +8,7 @@
 #define aeob 22
 
 /*Motor B Pins*/
-#define bin1 8    
+#define bin1 8
 #define bin2 9
 #define pwmb 10
 #define beoa 14
@@ -39,39 +39,39 @@ double Kd = 0.2;
 PID myPID(&Input, &Output, &Setpoint, Kp, Ki, Kd, DIRECT);
 
 /*Changes aCount based on the spinning of motor A*/
-void aSpin(){
-  if (digitalRead(aeoa) == digitalRead(aeob)){
+void aSpin() {
+  if (digitalRead(aeoa) == digitalRead(aeob)) {
     aCount++;
   }
-  else{
+  else {
     aCount--;
   }
-  
+
   //Once motor A makes 1 turn, we'll use the PID
-  if(aCount%180 == 0){
-    Input = bCount-aCount;
+  if (aCount % 180 == 0) {
+    Input = bCount - aCount;
     myPID.Compute();
-    
+
     //The adjustment is the current speed of motor B minus the Output value of the PID controller
-    int bAdjust = bSpeed-Output;
+    int bAdjust = bSpeed - Output;
 
     //Remember to constrain your new speed just to make sure that you don't ouput any strange values!
-    bSpeed = constrain(bAdjust,0,255);
-    analogWrite(pwmb,bSpeed);
+    bSpeed = constrain(bAdjust, 0, 255);
+    analogWrite(pwmb, bSpeed);
   }
 }
 
 /*Changes bCount based on the spinning of motor B*/
-void bSpin(){
-  if (digitalRead(beoa) == digitalRead(beob)){
+void bSpin() {
+  if (digitalRead(beoa) == digitalRead(beob)) {
     bCount--;
   }
-  else{
+  else {
     bCount++;
   }
 }
 
-void moveForwardOne(){
+void moveForwardOne() {
   digitalWrite(ain1, LOW);
   digitalWrite(ain2, HIGH);
   digitalWrite(bin1, HIGH);
@@ -91,7 +91,7 @@ void setup() {
   pinMode(beob, INPUT);
   pinMode(pwmb, OUTPUT);
   pinMode(stby, OUTPUT);
-  
+
   //Remember to set STBY to high, otherwise your bot won't run
   digitalWrite(stby, HIGH);
 
@@ -104,8 +104,8 @@ void setup() {
   analogWrite(pwmb, bSpeed);
 
   //The aSpin and bSpin functions will be called each time there is a change in the values of the A channels
-  attachInterrupt(digitalPinToInterrupt(aeoa),aSpin,CHANGE);
-  attachInterrupt(digitalPinToInterrupt(beoa),bSpin,CHANGE);
+  attachInterrupt(digitalPinToInterrupt(aeoa), aSpin, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(beoa), bSpin, CHANGE);
 
   //Turn the PID on
   myPID.SetMode(AUTOMATIC);
