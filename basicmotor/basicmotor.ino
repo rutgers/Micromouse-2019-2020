@@ -27,24 +27,22 @@ volatile int bCount = 0;
 
 /*For my code, I want motor B to try and match up to motor A's speed, so I will make motor B's speed subject to change*/
 //Initially, bSpeed = 100, but this will change as the PID accounts for the difference between motor B's and motor A's speeds
-int bSpeed = 100;
+int bSpeed = 50;
 
 /*Here is the PID setup to work with (read the library online for more details)*/
 double Input = 0.0, Output = 0.0, Setpoint = 0.0;
 /*You can change the constants for Kp, Ki, and Kd based on your testing results*/
-double Kp = 2.0;
-double Ki = 5.0;
-double Kd = 0.08;
-PID myPID(&Input, &Output, &Setpoint, Kp, Ki, Kd, DIRECT);
+double Kp = 4, Ki = 12, Kd = 0.2;
 
+PID myPID(&Input, &Output, &Setpoint, Kp, Ki, Kd, DIRECT);
 
 /*Changes aCount based on the spinning of motor A*/
 void aSpin() {
   if (digitalRead(aeoa) == digitalRead(aeob)) {
-    aCount++;
+    aCount--;
   }
   else {
-    aCount--;
+    aCount++;
   }
 }
 
@@ -66,6 +64,8 @@ void moveForwardOne() {
 }
 
 void setup() {
+  Serial1.begin(38400);
+  
   //Set up pin modes based on whether you're reading or sending values
   pinMode(ain1, OUTPUT);
   pinMode(ain2, OUTPUT);
@@ -85,7 +85,7 @@ void setup() {
   //Here, you're setting the initial direction and speed your motors are gonna go
   digitalWrite(ain1, LOW);
   digitalWrite(ain2, HIGH);
-  analogWrite(pwma, 100);
+  analogWrite(pwma, 40);
   digitalWrite(bin1, HIGH);
   digitalWrite(bin2, LOW);
   analogWrite(pwmb, bSpeed);
@@ -96,11 +96,22 @@ void setup() {
 
   //Turn the PID on by having it's mode set to AUTOMATIC
   myPID.SetMode(AUTOMATIC);
+  myPID.SetSampleTime(10);
+//  myPID.SetOutputLimits(0,60);
 }
 
 void loop() {
+  if(millis() < 2000){
+    digitalWrite(stby, LOW);
+    return;
+  }
+  else{
+    digitalWrite(stby, HIGH);
+  }
+  
   //Take the difference in motor count as the input and run the PID function
   Input = bCount - aCount;
+  
   myPID.Compute();
   
   //The output is the degree of change needed to match up your input with the setpoint
@@ -110,6 +121,6 @@ void loop() {
   
   //To check it's working, keep track of the input and setpoint as your bot runs
   //The input should go towards the setpoint and hover around it, indicating that the difference in your motors' tick counts are around 0
-  Serial.printf("%lf\t%lf\n",Input,Setpoint);
-  delay(10);
+  Serial.println(Input);
+  delay(1);
 }
