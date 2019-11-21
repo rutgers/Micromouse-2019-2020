@@ -116,7 +116,7 @@ void setup() {
   digitalWrite(bin2, LOW);
   analogWrite(pwmb, bSpeed);
 
-  //The aSpin and bSpin functions will be called each time there is a change in the values of the encoders' A channels
+  //The aSpin and bSpin functions will be called each time there is a change in the values of the encoders' sensor readings
   attachInterrupt(digitalPinToInterrupt(aeoa), aASpin, CHANGE);
   attachInterrupt(digitalPinToInterrupt(aeob), aBSpin, CHANGE);
   attachInterrupt(digitalPinToInterrupt(beoa), bASpin, CHANGE);
