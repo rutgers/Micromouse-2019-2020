@@ -87,11 +87,7 @@ void moveForwardOne() {
   digitalWrite(bin2, LOW);
 }
 
-#define blueserial Serial1
-
 void setup() {
-  blueserial.begin(38400);
-  
   //Set up pin modes based on whether you're reading or sending values
   pinMode(ain1, OUTPUT);
   pinMode(ain2, OUTPUT);
