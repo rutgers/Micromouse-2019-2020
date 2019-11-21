@@ -32,7 +32,7 @@ int bSpeed = 40;
 /*Here is the PID setup to work with (read the library online for more details)*/
 double Input = 0.0, Output = 0.0, Setpoint = 0.0;
 /*You can change the constants for Kp, Ki, and Kd based on your testing results*/
-double Kp = 2, Ki = 4, Kd = 0.1;
+double Kp = 6, Ki = 12, Kd = 0.2;
 /*Create the PID controller*/
 PID myPID(&Input, &Output, &Setpoint, Kp, Ki, Kd, DIRECT);
 
@@ -124,42 +124,10 @@ void setup() {
 
   //Turn the PID on by having it's mode set to AUTOMATIC
   myPID.SetMode(AUTOMATIC);
-  myPID.SetSampleTime(1);
+  myPID.SetSampleTime(10);
 }
 
-bool pass = false;
 void loop() {
-  if(blueserial.available()){
-    Serial.write(blueserial.read());
-  }
-  if(Serial.available()){
-    blueserial.write(Serial.read());
-  }
-}
-
-/*
-  if(millis() < 2000){
-    return;
-  }
-  if(!pass){
-    digitalWrite(stby, HIGH);
-    digitalWrite(bin1, HIGH);
-    digitalWrite(bin2, LOW);
-    myPID.SetTunings(0.5,5,0.1);
-    myPID.SetSampleTime(0.1);
-    while(aCount < 90){
-      Input = bCount-aCount;
-      myPID.Compute();
-      bSpeed = Output;
-      analogWrite(pwmb, bSpeed);
-      Serial.println(Output);
-    }
-    digitalWrite(stby, LOW);
-    pass = true;
-  }
-*/
-
-/*
   if(millis() < 2000){
     digitalWrite(stby, LOW);
     return;
@@ -182,4 +150,4 @@ void loop() {
   //The input should go towards the setpoint and hover around it, indicating that the difference in your motors' tick counts are around 0
   Serial.println(Input);
   delay(10);
-*/
+}
